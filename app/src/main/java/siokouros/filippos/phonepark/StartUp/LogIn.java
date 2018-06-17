@@ -24,6 +24,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.lang.reflect.Array;
+
 import siokouros.filippos.phonepark.Interfaces.PublicFunctions;
 import siokouros.filippos.phonepark.Main.MainActivity;
 import siokouros.filippos.phonepark.R;
@@ -88,6 +90,20 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        if(auth.getCurrentUser() != null){
+            getActivity().finish();
+            Intent myIntent = new Intent(getActivity(), MainActivity.class);
+            startActivity(myIntent);
+        }
+
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -182,14 +198,16 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
         }
 
         loginProgressbar.setVisibility(View.VISIBLE);
+
         auth.signInWithEmailAndPassword(loginEmail, loginPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 loginProgressbar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
                     Toast.makeText(getActivity(),"User signed in",Toast.LENGTH_SHORT).show();
-//                    Intent myIntent = new Intent(getActivity(), MainActivity.class);
-//                    getActivity().startActivity(myIntent);
+                    getActivity().finish();
+                    Intent myIntent = new Intent(getActivity(), MainActivity.class);
+                    startActivity(myIntent);
                 }else{
                     Toast.makeText(getActivity(),task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -211,7 +229,6 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
                         .commit();
                 break;
             case R.id.loginButton:
-
                 hideKeyboard(getActivity());
                 userLogin();
         }

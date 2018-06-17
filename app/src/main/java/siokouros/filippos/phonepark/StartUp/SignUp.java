@@ -2,6 +2,7 @@ package siokouros.filippos.phonepark.StartUp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.FirebaseDatabase;
 
 import siokouros.filippos.phonepark.Interfaces.PublicFunctions;
+import siokouros.filippos.phonepark.Main.MainActivity;
 import siokouros.filippos.phonepark.Model.User;
 import siokouros.filippos.phonepark.R;
 
@@ -165,17 +167,11 @@ public class SignUp extends Fragment implements PublicFunctions, View.OnClickLis
                             .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-
                             if(task.isSuccessful()) {
                                 Toast.makeText(getActivity(), "User registered successfull", Toast.LENGTH_LONG).show();
-                                LogIn logIn = new LogIn();
-                                Bundle args = new Bundle();
-                                args.putString("loginEmail", email);
-                                logIn.setArguments(args);
-                                FragmentManager manager = getFragmentManager();
-                                manager.beginTransaction()
-                                        .replace(R.id.fragmentArea, logIn).addToBackStack(null)
-                                        .commit();
+                                getActivity().finish();
+                                Intent myIntent = new Intent(getActivity(), MainActivity.class);
+                                startActivity(myIntent);
                             }
                         }
                     });
