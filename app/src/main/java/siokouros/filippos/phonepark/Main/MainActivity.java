@@ -13,12 +13,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,38 +30,66 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Iterator;
+import java.util.Objects;
+
+import siokouros.filippos.phonepark.Model.Parking;
+import siokouros.filippos.phonepark.Model.User;
 import siokouros.filippos.phonepark.R;
+import siokouros.filippos.phonepark.StartUp.LogIn;
 import siokouros.filippos.phonepark.StartUp.SignUp;
 import siokouros.filippos.phonepark.StartUp.StartUpActivity;
 
-public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements AboutFragment.OnFragmentInteractionListener , ParkingFragment.OnFragmentInteractionListener {
+    private static final String TAG = "MainActivity";
 
-    TextView mainName, mainSurname, mainEmail;
+
+    TextView mainName, mainEmail;
     NavigationView navigationViev;
 
     private DrawerLayout mDrawerLayout;
 
+    User user;
 
+    //Firebase stuff
     FirebaseAuth auth;
+    DatabaseReference databaseReference;
+    FirebaseAuth.AuthStateListener authStateListener;
     FirebaseDatabase database;
-    DatabaseReference mRef;
+    String userID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Firebase stuff
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        mRef = database.getReference("Users");
+        databaseReference = database.getReference();
+        FirebaseUser user = auth.getCurrentUser();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View v = navigationView.getHeaderView(0);
+
+
+        mainEmail = v.findViewById(R.id.nav_email);
+        mainName = v.findViewById(R.id.nav_name);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayShowCustomEnabled(false);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
-        loadUserInformation();
+
+        FragmentManager manager = getSupportFragmentManager();
+
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         navigationViev = findViewById(R.id.nav_view);
@@ -69,45 +99,60 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
                 item.setChecked(true);
 
                 mDrawerLayout.closeDrawers();
+                FragmentManager manager = getSupportFragmentManager();
 
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
+                    case R.id.nav_myAccount:
+                        ParkingFragment parkingFragment = new ParkingFragment();
+                        manager.beginTransaction()
+                                .replace(R.id.main_frame_fragment, parkingFragment).addToBackStack(null)
+                                .commit();
+                        item.setChecked(false);
+                        break;
+
                     case R.id.nav_about:
                         AboutFragment aboutFragment = new AboutFragment();
-                        FragmentManager manager = getSupportFragmentManager();
                         manager.beginTransaction()
-                                .replace(R.id.main_frame_fragment,aboutFragment).addToBackStack(null)
+                                .replace(R.id.main_frame_fragment, aboutFragment).addToBackStack(null)
                                 .commit();
+                        item.setChecked(false);
                         break;
                     case R.id.nav_logout:
-                        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                        alertDialog.setTitle("Logout?");
-                        alertDialog.setButton(1, "Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                alertDialog.cancel();
-                            }
-                        });
-                        alertDialog.setButton(0, "Logout", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                    FirebaseAuth.getInstance().signOut();
-                                    finish();
-                            }
-                        });
-
+                        FirebaseAuth.getInstance().signOut();
+                        logout();
+                        item.setChecked(false);
+                        break;
                 }
-
-
 
                 return true;
             }
         });
+        String email = "example@something.com";
+        email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
+        mainEmail.setText(email);
 
-        mainName = findViewById(R.id.MainNameTextView);
-        mainSurname = findViewById(R.id.MainSurnameTextView);
-        mainEmail = findViewById(R.id.nav_email);
+        ParkingFragment parkingFragment = new ParkingFragment();
+        manager.beginTransaction()
+                .replace(R.id.main_frame_fragment, parkingFragment).addToBackStack(null)
+                .commit();
+
+    }
+
+    private void logout() {
+        Intent myIntent = new Intent(this, StartUpActivity.class);
+        startActivity(myIntent);
+    }
+
+    private void showData(DataSnapshot dataSnapshot) {
+        for(DataSnapshot ds : dataSnapshot.getChildren()){
+            User user = new User();
+            user.setName(Objects.requireNonNull(ds.child(userID).getValue(User.class)).getName());
+            user.setSurname(Objects.requireNonNull(ds.child(userID).getValue(User.class)).getSurname());
+            user.setEmail(Objects.requireNonNull(ds.child(userID).getValue(User.class)).getEmail());
+
+            mainName.setText(user.getName() + " " + user.getSurname());
+        }
 
 
     }
@@ -125,11 +170,11 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
     }
 
+
+
     private void loadUserInformation() {
 
-        FirebaseUser user = auth.getCurrentUser();
-        String displayEmail = user.getEmail();
-        mainEmail.setText(displayEmail);
+
 
     }
 
@@ -152,6 +197,8 @@ public class MainActivity extends AppCompatActivity implements AboutFragment.OnF
 
         return true;
     }
+
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {

@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import siokouros.filippos.phonepark.Interfaces.PublicFunctions;
@@ -55,6 +56,7 @@ public class SignUp extends Fragment implements PublicFunctions, View.OnClickLis
     private Button signUpBtn;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
+    private DatabaseReference databaseUser;
 
 
 
@@ -98,6 +100,7 @@ public class SignUp extends Fragment implements PublicFunctions, View.OnClickLis
 
         // Get firebase auth instance
         auth =  FirebaseAuth.getInstance();
+        databaseUser = FirebaseDatabase.getInstance().getReference("Users");
 
 
         inputName = rootView.findViewById(R.id.firstNameInput);
@@ -161,10 +164,10 @@ public class SignUp extends Fragment implements PublicFunctions, View.OnClickLis
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
+                    String id = auth.getUid();
                     User user = new User(name,surname,email);
-                    FirebaseDatabase.getInstance().getReference("Users")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    databaseUser.child(id).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {

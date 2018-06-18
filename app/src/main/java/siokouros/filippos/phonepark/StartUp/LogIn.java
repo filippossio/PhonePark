@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.lang.reflect.Array;
 
@@ -96,6 +97,8 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
     @Override
     public void onStart(){
         super.onStart();
+        hideKeyboard(getActivity());
+
         if(auth.getCurrentUser() != null){
             getActivity().finish();
             Intent myIntent = new Intent(getActivity(), MainActivity.class);
