@@ -2,12 +2,17 @@ package siokouros.filippos.phonepark.StartUp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +46,10 @@ import siokouros.filippos.phonepark.R;
  * create an instance of this fragment.
  */
 public class LogIn extends Fragment implements PublicFunctions, View.OnClickListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -73,7 +76,6 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
      * @param param2 Parameter 2.
      * @return A new instance of fragment LogIn.
      */
-    // TODO: Rename and change types and number of parameters
     public static LogIn newInstance(String param1, String param2) {
         LogIn fragment = new LogIn();
         Bundle args = new Bundle();
@@ -98,14 +100,7 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
     public void onStart(){
         super.onStart();
         hideKeyboard(getActivity());
-
-        if(auth.getCurrentUser() != null){
-            getActivity().finish();
-            Intent myIntent = new Intent(getActivity(), MainActivity.class);
-            startActivity(myIntent);
-        }
-
-    }
+       }
 
 
     @Override
@@ -141,8 +136,13 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
         loginSignupText.setOnClickListener(this);
 
 
+
         return rootView;
        }
+
+
+
+
 
     public void hideKeyboard(Activity activity) {
         View view = activity.findViewById(android.R.id.content);
@@ -233,7 +233,7 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
                 break;
             case R.id.loginButton:
                 hideKeyboard(getActivity());
-                userLogin();
+                 userLogin();
         }
 
 
@@ -252,7 +252,6 @@ public class LogIn extends Fragment implements PublicFunctions, View.OnClickList
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

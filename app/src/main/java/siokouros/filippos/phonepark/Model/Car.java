@@ -3,19 +3,15 @@ package siokouros.filippos.phonepark.Model;
 
 public class Car {
 
-    private enum Colour {
-        Black, White, Red, Green,
-        Blue, Yellow, Silver,
-        Gray, Orange, Gold
-            }
+
 
     private String make;
     private String model;
-    private int year;
-    private Colour colour;
+    private String year;
+    private String colour;
     private String RegNumber;
 
-    public Car(String make, String model, int year, Colour colour, String regNumber) {
+    public Car(String make, String model, String year, String colour, String regNumber) {
         this.make = make;
         this.model = model;
         this.year = year;
@@ -43,19 +39,19 @@ public class Car {
         this.model = model;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
-    public Colour getColour() {
+    public String getColour() {
         return colour;
     }
 
-    public void setColour(Colour colour) {
+    public void setColour(String colour) {
         this.colour = colour;
     }
 

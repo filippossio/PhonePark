@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">PhonePark</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email_hint_text"><font size="14">Email Address</font></string>
     <string name="password_hint_text"><font size="14">Password</font></string>
@@ -19,5 +18,14 @@
     <string name="continue_with_google">Continue with Google</string>
     <string name="phonepark">PhonePark</string>
     <string name="pyla">Pyla</string>
+    <string name="register_a_car">Register a car</string>
+    <string name="year"><font size="14">Year</font></string>
+    <string name="registration_number"><font size="14">Registration Number</font></string>
+    <string name="submit">Submit</string>
+    <string name="model"><font size="14">Model</font></string>
+    <string name="make"><font size="14">Make</font></string>
+    <string name="hours">hours</string>
+    <string name="start_time">startTime</string>
+    <string name="minutes">minutes</string>
 
 </resources>
